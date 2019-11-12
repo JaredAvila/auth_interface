@@ -1,6 +1,11 @@
 const express = require("express");
+
+const juvicountRouter = require("./routes/juvicountRoutes");
+
 const app = express();
 
 app.use(express.json());
 
-app.listen(8000, () => console.log("listening..."));
+app.use("/api/v1/juvicount", juvicountRouter);
+
+module.exports = app;
