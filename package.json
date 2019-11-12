@@ -1,0 +1,16 @@
+{
+  "name": "auth_interface",
+  "version": "1.0.0",
+  "description": "Interface for using Firebase API",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node app.js"
+  },
+  "author": "Jared Avila",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^0.19.0",
+    "express": "^4.17.1"
+  }
+}
