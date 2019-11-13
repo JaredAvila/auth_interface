@@ -48,7 +48,8 @@ exports.register = (req, res) => {
         status: "success",
         idToken: data.data.idToken,
         email: data.data.email,
-        id: data.data.localId
+        id: data.data.localId,
+        expiresIn: data.data.expiresIn
       });
     })
     .catch(err => {
