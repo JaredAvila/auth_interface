@@ -22,8 +22,36 @@ const getAllUsers = async (req, res, next) => {
   }
 };
 
-router.route("/login").post(juvicountController.login);
-router.route("/register").post(juvicountController.register);
+const register = async (req, res, next) => {
+  try {
+    const newUser = await User.create({
+      name: req.body.name,
+      email: req.body.email,
+      password: req.body.password,
+      password2: req.body.password2,
+      passwordChangedAt: req.body.passwordChangedAt,
+      role: req.body.role,
+      photo: req.body.photo
+    });
+
+    const token = null;
+    res.status(200).json({
+      status: "success",
+      token,
+      data: {
+        newUser
+      }
+    });
+  } catch (err) {
+    res.status(400).json({
+      status: "error",
+      message: err
+    });
+  }
+};
+
+// router.route("/login").post(juvicountController.login);
+router.route("/register").post(register);
 
 router.route("/").get(getAllUsers);
 
