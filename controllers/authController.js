@@ -109,14 +109,13 @@ exports.registerChild = async (req, res, next) => {
       parent: req.user.email
     });
 
-    const updatedParent = req.user;
+    const updatedParent = await User.findOne({ email: req.user.email });
     updatedParent.children.push(childAccount._id);
     await updatedParent.save({ validateBeforeSave: false });
 
     // send back token and user data
     res.status(200).json({
       status: "success",
-      token,
       data: {
         parent: updatedParent,
         child: childAccount
@@ -126,8 +125,8 @@ exports.registerChild = async (req, res, next) => {
     // catch errors and send 400 error
   } catch (err) {
     res.status(400).json({
-      status: "error",
-      message: err
+      status: "child account error",
+      err
     });
   }
 };
