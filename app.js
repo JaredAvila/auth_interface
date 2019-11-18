@@ -1,6 +1,6 @@
 const express = require("express");
 
-const juvicountRouter = require("./routes/juvicountRoutes");
+const errorHandler = require("./controllers/errorController");
 const userRouter = require("./routes/userRoutes");
 
 const app = express();
@@ -16,7 +16,8 @@ app.use(function(req, res, next) {
 
 app.use(express.json());
 
-app.use("/api/v1/juvicount", juvicountRouter);
 app.use("/api/v1/users", userRouter);
+
+app.use(errorHandler);
 
 module.exports = app;
