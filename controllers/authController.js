@@ -171,3 +171,37 @@ exports.forgotPassword = async (req, res, next) => {
     );
   }
 };
+
+exports.resetPassword = async (req, res, next) => {
+  try {
+    const hashedToken = crypto
+      .createHash("sha256")
+      .update(req.params.token)
+      .digest("hex");
+
+    const user = await User.findOne({
+      passwordResetToken: hashedToken,
+      passwordResetExpires: { $gt: Date.now() }
+    });
+
+    if (!user) {
+      return next(new AppError("Token is invalid", 400));
+    }
+    user.password = req.body.password;
+    user.password2 = req.body.password2;
+    user.passwordResetToken = undefined;
+    user.passwordResetExpires = undefined;
+    await user.save();
+
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
+      expiresIn: process.env.JWT_EXPIRES_IN
+    });
+
+    res.status(200).json({
+      status: "success",
+      token
+    });
+  } catch (err) {
+    next(new AppError(err, 400));
+  }
+};
