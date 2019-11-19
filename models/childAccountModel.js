@@ -7,7 +7,8 @@ const childSchema = new mongoose.Schema({
     trim: true
   },
   photo: {
-    type: String
+    type: String,
+    default: "No photo"
   },
   role: {
     type: String,
