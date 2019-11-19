@@ -30,6 +30,34 @@ exports.getAllChildren = async (req, res, next) => {
   }
 };
 
+exports.updateProfile = async (req, res, next) => {
+  try {
+    // 1) get the user if exists
+    const user = await User.findOne({ email: req.user.email });
+    if (!user) {
+      return next(
+        new AppError("Unable to find your account. Please log in again", 404)
+      );
+    }
+
+    // 2) Update info
+    user.email = req.body.eamil;
+    user.name = req.body.name;
+    user.photo = req.body.photo;
+
+    // 3) Save user and respond
+    await user.save();
+    res.status(200).json({
+      status: "success",
+      data: {
+        user
+      }
+    });
+  } catch (err) {
+    next(new AppError(`Unable to update account. Message: ${err}`, 400));
+  }
+};
+
 exports.getChild = async (req, res, next) => {
   try {
     const child = await Child.findById(req.params.id);
