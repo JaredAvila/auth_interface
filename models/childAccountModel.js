@@ -21,6 +21,14 @@ const childSchema = new mongoose.Schema({
   parent: {
     type: String,
     required: true
+  },
+  items: {
+    type: Array,
+    default: []
+  },
+  balance: {
+    type: Number,
+    default: 0
   }
 });
 

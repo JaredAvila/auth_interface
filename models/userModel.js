@@ -49,6 +49,10 @@ const userSchema = new mongoose.Schema({
     type: Array,
     default: []
   },
+  items: {
+    type: Array,
+    default: []
+  },
   passwordResetToken: String,
   passwordResetExpires: Date
 });
