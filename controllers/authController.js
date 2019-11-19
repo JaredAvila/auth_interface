@@ -3,6 +3,8 @@ const Child = require("../models/childAccountModel");
 const jwt = require("jsonwebtoken");
 const AppError = require("../utils/AppError");
 const { promisify } = require("util");
+const sendEmail = require("../utils/email");
+const crypto = require("crypto");
 
 exports.protect = async (req, res, next) => {
   // 1) get token and check that it exists
@@ -129,5 +131,43 @@ exports.registerChild = async (req, res, next) => {
     // catch errors and send 400 error
   } catch (err) {
     next(new AppError(err, 400));
+  }
+};
+
+exports.forgotPassword = async (req, res, next) => {
+  const user = await User.findOne({ email: req.body.email });
+  if (!user) {
+    return next(new AppError("There is no user with that email", 404));
+  }
+  const resetToken = user.createPasswordResetToken();
+  await user.save({ validateBeforeSave: false });
+
+  const resetURL = `${req.protocol}://${req.get(
+    "host"
+  )}/api/v1/users/resetPassword/${resetToken}`;
+
+  const message = `Someone, hopefully you, requested to reset your password. Go to this URL to update your password: \n ${resetURL} \nIf you didn't request this, then just ignore this email. URL will expire in ten minues`;
+
+  try {
+    await sendEmail({
+      email: user.email,
+      subject: "Password reset request",
+      message
+    });
+    res.status(200).json({
+      status: "success",
+      message: "Email has been sent to reset password"
+    });
+  } catch (err) {
+    user.passwordResetToken = undefined;
+    user.passwordResetExpires = undefined;
+    await user.save({ validateBeforeSave: false });
+
+    return next(
+      new AppError(
+        "There was an error sending the email. Please try again later",
+        500
+      )
+    );
   }
 };

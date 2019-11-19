@@ -26,7 +26,7 @@ exports.getAllChildren = async (req, res, next) => {
       }
     });
   } catch (err) {
-    next(new AppError("Couldn't get all children", 400));
+    next(new AppError("Couldn't get all children", 404));
   }
 };
 
@@ -40,7 +40,7 @@ exports.getChild = async (req, res, next) => {
       }
     });
   } catch (err) {
-    next(new AppError("Coudn't find child", 400));
+    next(new AppError("Coudn't find child", 404));
   }
 };
 exports.updateChild = async (req, res, next) => {
@@ -60,14 +60,14 @@ exports.updateChild = async (req, res, next) => {
       }
     });
   } catch (err) {
-    next(new AppError("Coudn't find child", 400));
+    next(new AppError("Coudn't find child", 404));
   }
 };
 exports.deleteChild = async (req, res, next) => {
   try {
     const child = await Child.findByIdAndDelete(req.params.id);
     if (!child) {
-      return next(new AppError("Coudn't find child", 400));
+      return next(new AppError("Coudn't find child", 404));
     }
     const { email } = req.user;
     const user = await User.findOne({ email });
@@ -83,6 +83,6 @@ exports.deleteChild = async (req, res, next) => {
       user: updatedUser
     });
   } catch (err) {
-    next(new AppError("Coudn't find child", 400));
+    next(new AppError("Coudn't find child", 404));
   }
 };
