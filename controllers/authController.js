@@ -108,7 +108,7 @@ exports.registerChild = async (req, res, next) => {
     const childAccount = await Child.create({
       name: req.body.name,
       photo: req.body.photo,
-      parent: req.user.email
+      parent: req.user._id
     });
 
     const updatedParent = await User.findOne({ email: req.user.email });

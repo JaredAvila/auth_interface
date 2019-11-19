@@ -41,12 +41,30 @@ exports.updateProfile = async (req, res, next) => {
     }
 
     // 2) Update info
-    user.email = req.body.eamil;
-    user.name = req.body.name;
-    user.photo = req.body.photo;
+    if (req.body.email) {
+      // validate email without validating the rest of the user
+      if (!validateEmail(req.body.email)) {
+        return next(new AppError("Must enter a valid email", 400));
+      }
+
+      user.email = req.body.email;
+    }
+    if (req.body.name) {
+      if (req.body.name.trim() === "") {
+        return next(new AppError("Name cannot be blank", 400));
+      }
+      user.name = req.body.name;
+    }
+
+    if (req.body.photo) {
+      if (req.body.photo.trim() === "") {
+        return next(new AppError("Photo cannot be blank", 400));
+      }
+      user.photo = req.body.photo;
+    }
 
     // 3) Save user and respond
-    await user.save();
+    await user.save({ validateBeforeSave: false });
     res.status(200).json({
       status: "success",
       data: {
@@ -73,6 +91,9 @@ exports.getChild = async (req, res, next) => {
 };
 exports.updateChild = async (req, res, next) => {
   try {
+    // find user and make sure child belongs to user
+    const user = await User.findOne({ email: req.user.email });
+    // find child and update child
     const child = await Child.findById(req.params.id);
     if (req.body.name) {
       child.name = req.body.name;
@@ -81,6 +102,16 @@ exports.updateChild = async (req, res, next) => {
       child.photo = req.body.photo;
     }
     const updatedChild = await child.save({ validateBeforeSave: false });
+    // update parents children array
+    const newChildren = user.children.map(el => {
+      if (el.id === req.body.id) {
+        el = updatedChild;
+      }
+      return el;
+    });
+    user.children = newChildren;
+    await user.save({ validateBeforeSave: false });
+    // respond with new child account
     res.status(200).json({
       status: "success",
       data: {
@@ -97,8 +128,7 @@ exports.deleteChild = async (req, res, next) => {
     if (!child) {
       return next(new AppError("Coudn't find child", 404));
     }
-    const { email } = req.user;
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ email: req.user.email });
     const newChildren = user.children.filter(el => {
       return el.id.toString() !== req.params.id;
     });
@@ -113,4 +143,9 @@ exports.deleteChild = async (req, res, next) => {
   } catch (err) {
     next(new AppError("Coudn't find child", 404));
   }
+};
+
+const validateEmail = email => {
+  var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+  return re.test(String(email).toLowerCase());
 };

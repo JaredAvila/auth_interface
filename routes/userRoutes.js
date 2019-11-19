@@ -10,9 +10,10 @@ router.route("/register").post(authController.register);
 router.route("/forgotPassword").post(authController.forgotPassword);
 router.route("/resetPassword/:token").patch(authController.resetPassword);
 
+router.route("/").get(userController.getAllUsers);
+
 router
-  .route("/")
-  .get(userController.getAllUsers)
+  .route("/user")
   .patch(authController.protect, userController.updateProfile);
 
 router
