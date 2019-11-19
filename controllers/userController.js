@@ -32,6 +32,10 @@ exports.getAllChildren = async (req, res, next) => {
 
 exports.updateProfile = async (req, res, next) => {
   try {
+    // check for empty submission
+    if (!req.body.name && !req.body.photo && !req.body.email) {
+      return next(new AppError("No input recieved", 400));
+    }
     // 1) get the user if exists
     const user = await User.findOne({ email: req.user.email });
     if (!user) {
@@ -73,6 +77,35 @@ exports.updateProfile = async (req, res, next) => {
     });
   } catch (err) {
     next(new AppError(`Unable to update account. Message: ${err}`, 400));
+  }
+};
+
+exports.deleteAccount = async (req, res, next) => {
+  try {
+    // 1) get the user if exists
+    const user = await User.findOne({ email: req.user.email });
+    if (!user) {
+      return next(
+        new AppError("Unable to find your account. Please log in again", 404)
+      );
+    }
+
+    // 2) delete all children for user
+    if (user.children.length !== 0) {
+      const res = await Child.deleteMany({ parent: user._id });
+    }
+
+    // 3) delete account
+    await User.deleteOne({ email: req.user.email });
+
+    res.status(200).json({
+      status: "success",
+      message: "User successfull deleted"
+    });
+  } catch (err) {
+    res.status(500).json({
+      err
+    });
   }
 };
 

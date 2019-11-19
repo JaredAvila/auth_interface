@@ -14,7 +14,8 @@ router.route("/").get(userController.getAllUsers);
 
 router
   .route("/user")
-  .patch(authController.protect, userController.updateProfile);
+  .patch(authController.protect, userController.updateProfile)
+  .delete(authController.protect, userController.deleteAccount);
 
 router
   .route("/children")
