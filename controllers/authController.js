@@ -43,6 +43,13 @@ exports.protect = async (req, res, next) => {
   next();
 };
 
+exports.confirmParent = async (req, res, next) => {
+  if (!req.user.children.find(el => el.id.toString() === req.params.id)) {
+    return next(new AppError("this child does not belong to you", 403));
+  }
+  next();
+};
+
 exports.register = async (req, res, next) => {
   try {
     // 1) create new user from form data

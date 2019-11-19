@@ -23,8 +23,20 @@ router
 
 router
   .route("/child/:id")
-  .get(authController.protect, userController.getChild)
-  .patch(authController.protect, userController.updateChild)
-  .delete(authController.protect, userController.deleteChild);
+  .get(
+    authController.protect,
+    authController.confirmParent,
+    userController.getChild
+  )
+  .patch(
+    authController.protect,
+    authController.confirmParent,
+    userController.updateChild
+  )
+  .delete(
+    authController.protect,
+    authController.confirmParent,
+    userController.deleteChild
+  );
 
 module.exports = router;

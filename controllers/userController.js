@@ -91,9 +91,20 @@ exports.getChild = async (req, res, next) => {
 };
 exports.updateChild = async (req, res, next) => {
   try {
-    // find user and make sure child belongs to user
+    // checks for empty inputs
+    if (!req.body.name && !req.body.photo) {
+      return next(new AppError("No update information given", 400));
+    }
+
+    // make sure user is logged in
     const user = await User.findOne({ email: req.user.email });
-    // find child and update child
+    if (!user) {
+      return next(
+        new AppError("Could not find account. Please log in again", 400)
+      );
+    }
+
+    // update child account
     const child = await Child.findById(req.params.id);
     if (req.body.name) {
       child.name = req.body.name;
@@ -102,19 +113,29 @@ exports.updateChild = async (req, res, next) => {
       child.photo = req.body.photo;
     }
     const updatedChild = await child.save({ validateBeforeSave: false });
+
     // update parents children array
+    foundChild = {
+      id: updatedChild._id,
+      name: updatedChild.name,
+      photo: updatedChild.photo
+    };
+
     const newChildren = user.children.map(el => {
-      if (el.id === req.body.id) {
-        el = updatedChild;
+      if (el.id.toString() === req.params.id) {
+        el = foundChild;
       }
       return el;
     });
+
     user.children = newChildren;
     await user.save({ validateBeforeSave: false });
+
     // respond with new child account
     res.status(200).json({
       status: "success",
       data: {
+        parent: user,
         child: updatedChild
       }
     });
@@ -124,11 +145,21 @@ exports.updateChild = async (req, res, next) => {
 };
 exports.deleteChild = async (req, res, next) => {
   try {
+    // make sure user is logged in
+    const user = await User.findOne({ email: req.user.email });
+    if (!user) {
+      return next(
+        new AppError("Could not find account. Please log in again", 400)
+      );
+    }
+
+    // finds child and deletes account
     const child = await Child.findByIdAndDelete(req.params.id);
     if (!child) {
       return next(new AppError("Coudn't find child", 404));
     }
-    const user = await User.findOne({ email: req.user.email });
+
+    // removes child from parents children array
     const newChildren = user.children.filter(el => {
       return el.id.toString() !== req.params.id;
     });
@@ -141,7 +172,7 @@ exports.deleteChild = async (req, res, next) => {
       user: updatedUser
     });
   } catch (err) {
-    next(new AppError("Coudn't find child", 404));
+    next(new AppError("Something went wrong", 500));
   }
 };
 
