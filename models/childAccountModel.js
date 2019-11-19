@@ -28,6 +28,7 @@ const childSchema = new mongoose.Schema({
   },
   balance: {
     type: Number,
+    min: [0, "Amount cannot be less than 0"],
     default: 0
   }
 });

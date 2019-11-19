@@ -40,4 +40,12 @@ router
     userController.deleteChild
   );
 
+router
+  .route("/child/balance/:id")
+  .patch(
+    authController.protect,
+    authController.confirmParent,
+    userController.updateBalance
+  );
+
 module.exports = router;

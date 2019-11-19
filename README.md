@@ -55,6 +55,14 @@ body:
 - name
 - email
 
+> ### Delete account (PROTECTED)
+
+DELETE: /api/v1/user/:id
+
+---
+
+---
+
 ## Child Account Routes
 
 ---
@@ -68,19 +76,27 @@ body:
 - name (required)
 - photo
 
-> ### Get child account
+> ### Get child account (PROTECTED)
 
 GET: /api/v1/users/child/:id
 
-> ### Update child account
+> ### Update child account (PROTECTED)
 
 PATCH /api/v1/users/child/:id
 
 body:
+
 - name
 - photo
 
-> ### Delete child account
+> ### Delete child account (PROTECTED)
 
 DELETE /api/v1/users/child/:id
 
+> ### Update balance amount (PROTECTED)
+
+PATCH /api/v1/users/child/balance/:id
+
+body:
+
+- balance (required)

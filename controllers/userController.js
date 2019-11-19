@@ -209,6 +209,31 @@ exports.deleteChild = async (req, res, next) => {
   }
 };
 
+exports.updateBalance = async (req, res, next) => {
+  try {
+    if (!req.body.balance && req.body.balance !== 0) {
+      return next(new AppError("Must enter a balance", 400));
+    }
+    if (typeof req.body.balance !== "number") {
+      return next(new AppError("Must enter a number", 400));
+    }
+    const child = await Child.findById(req.params.id);
+    if (!child) {
+      return next(new AppError("Couldn't find child accont", 404));
+    }
+    child.balance = req.body.balance;
+    await child.save();
+    res.status(200).json({
+      status: "success",
+      data: {
+        child
+      }
+    });
+  } catch (err) {
+    next(new AppError(`${err}`, 500));
+  }
+};
+
 const validateEmail = email => {
   var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
   return re.test(String(email).toLowerCase());
