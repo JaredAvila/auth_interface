@@ -42,6 +42,10 @@ router
 
 router
   .route("/child/balance/:id")
-  .patch(authController.protect, userController.updateBalance);
+  .patch(
+    authController.protect,
+    userController.verifyParent,
+    userController.updateBalance
+  );
 
 module.exports = router;

@@ -44,13 +44,6 @@ exports.protect = catchAsync(async (req, res, next) => {
   next();
 });
 
-// exports.confirmParent = catchAsync(async (req, res, next) => {
-//   if (!req.user.children.find(el => el.id.toString() === req.params.id)) {
-//     return next(new AppError("this child does not belong to you", 403));
-//   }
-//   next();
-// });
-
 exports.register = catchAsync(async (req, res, next) => {
   // 1) create new user from form data
   const newUser = await User.create({
@@ -100,14 +93,6 @@ exports.registerChild = catchAsync(async (req, res, next) => {
     photo: req.body.photo,
     parent: req.user._id
   });
-
-  // const updatedParent = await User.findOne({ email: req.user.email });
-  // updatedParent.children.push({
-  //   id: childAccount._id,
-  //   name: childAccount.name,
-  //   photo: childAccount.photo
-  // });
-  // await updatedParent.save({ validateBeforeSave: false });
 
   // send back token and user data
   res.status(200).json({

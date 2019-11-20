@@ -80,11 +80,8 @@ exports.deleteAccount = catchAsync(async (req, res, next) => {
       new AppError("Unable to find your account. Please log in again", 404)
     );
   }
-
-  // 2) delete all children for user
-  if (user.children.length !== 0) {
-    await Child.deleteMany({ parent: user._id });
-  }
+  // 2) delete all users children
+  await Child.deleteMany({ parent: user._id });
 
   // 3) delete account
   await User.deleteOne({ email: req.user.email });
@@ -131,31 +128,10 @@ exports.updateChild = catchAsync(async (req, res, next) => {
 });
 
 exports.deleteChild = catchAsync(async (req, res, next) => {
-  // make sure user is logged in
-  const user = await User.findOne({ email: req.user.email });
-  if (!user) {
-    return next(
-      new AppError("Could not find account. Please log in again", 400)
-    );
-  }
-
-  // finds child and deletes account
-  const child = await Child.findByIdAndDelete(req.params.id);
-  if (!child) {
-    return next(new AppError("Coudn't find child", 404));
-  }
-
-  // removes child from parents children array
-  const newChildren = user.children.filter(el => {
-    return el.id.toString() !== req.params.id;
-  });
-  user.children = newChildren;
-  const updatedUser = await user.save({ validateBeforeSave: false });
-
+  await Child.findByIdAndDelete(req.params.id);
   res.status(200).json({
     status: "success",
-    message: "Child was deleted",
-    user: updatedUser
+    message: "Child was deleted"
   });
 });
 
@@ -166,10 +142,7 @@ exports.updateBalance = catchAsync(async (req, res, next) => {
   if (typeof req.body.balance !== "number") {
     return next(new AppError("Must enter a number", 400));
   }
-  const child = await Child.findById(req.params.id);
-  if (!child) {
-    return next(new AppError("Couldn't find child accont", 404));
-  }
+  const child = req.child;
   child.balance = req.body.balance;
   await child.save();
   res.status(200).json({
