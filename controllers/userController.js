@@ -17,9 +17,7 @@ exports.getAllUsers = catchAsync(async (req, res, next) => {
 });
 
 exports.getAllChildren = catchAsync(async (req, res, next) => {
-  const { email } = req.user;
-  const user = await User.findOne({ email });
-  const children = user.children;
+  const children = await Child.find({ parent: req.user._id });
   res.status(200).json({
     status: "success",
     data: {
@@ -85,7 +83,7 @@ exports.deleteAccount = catchAsync(async (req, res, next) => {
 
   // 2) delete all children for user
   if (user.children.length !== 0) {
-    const res = await Child.deleteMany({ parent: user._id });
+    await Child.deleteMany({ parent: user._id });
   }
 
   // 3) delete account
@@ -98,7 +96,32 @@ exports.deleteAccount = catchAsync(async (req, res, next) => {
 });
 
 exports.getChild = catchAsync(async (req, res, next) => {
-  const child = await Child.findById(req.params.id);
+  res.status(200).json({
+    status: "success",
+    data: {
+      child: req.child
+    }
+  });
+});
+
+exports.updateChild = catchAsync(async (req, res, next) => {
+  // checks for empty inputs
+  if (!req.body.name && !req.body.photo) {
+    return next(new AppError("No update information given", 400));
+  }
+
+  // update child account
+  const child = req.child;
+
+  if (req.body.name) {
+    child.name = req.body.name;
+  }
+  if (req.body.photo) {
+    child.photo = req.body.photo;
+  }
+  await child.save({ validateBeforeSave: false });
+
+  // respond with new child account
   res.status(200).json({
     status: "success",
     data: {
@@ -106,56 +129,7 @@ exports.getChild = catchAsync(async (req, res, next) => {
     }
   });
 });
-exports.updateChild = catchAsync(async (req, res, next) => {
-  // checks for empty inputs
-  if (!req.body.name && !req.body.photo) {
-    return next(new AppError("No update information given", 400));
-  }
 
-  // make sure user is logged in
-  const user = await User.findOne({ email: req.user.email });
-  if (!user) {
-    return next(
-      new AppError("Could not find account. Please log in again", 400)
-    );
-  }
-
-  // update child account
-  const child = await Child.findById(req.params.id);
-  if (req.body.name) {
-    child.name = req.body.name;
-  }
-  if (req.body.photo) {
-    child.photo = req.body.photo;
-  }
-  const updatedChild = await child.save({ validateBeforeSave: false });
-
-  // update parents children array
-  foundChild = {
-    id: updatedChild._id,
-    name: updatedChild.name,
-    photo: updatedChild.photo
-  };
-
-  const newChildren = user.children.map(el => {
-    if (el.id.toString() === req.params.id) {
-      el = foundChild;
-    }
-    return el;
-  });
-
-  user.children = newChildren;
-  await user.save({ validateBeforeSave: false });
-
-  // respond with new child account
-  res.status(200).json({
-    status: "success",
-    data: {
-      parent: user,
-      child: updatedChild
-    }
-  });
-});
 exports.deleteChild = catchAsync(async (req, res, next) => {
   // make sure user is logged in
   const user = await User.findOne({ email: req.user.email });
@@ -204,6 +178,18 @@ exports.updateBalance = catchAsync(async (req, res, next) => {
       child
     }
   });
+});
+
+exports.verifyParent = catchAsync(async (req, res, next) => {
+  const child = await Child.findById(req.params.id);
+  if (!child) {
+    return next(new AppError("Child not found", 404));
+  }
+  if (child.parent !== req.user._id.toString()) {
+    return next(new AppError("This child does not belong to you", 403));
+  }
+  req.child = child;
+  next();
 });
 
 const validateEmail = email => {

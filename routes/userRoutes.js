@@ -26,26 +26,22 @@ router
   .route("/child/:id")
   .get(
     authController.protect,
-    authController.confirmParent,
+    userController.verifyParent,
     userController.getChild
   )
   .patch(
     authController.protect,
-    authController.confirmParent,
+    userController.verifyParent,
     userController.updateChild
   )
   .delete(
     authController.protect,
-    authController.confirmParent,
+    userController.verifyParent,
     userController.deleteChild
   );
 
 router
   .route("/child/balance/:id")
-  .patch(
-    authController.protect,
-    authController.confirmParent,
-    userController.updateBalance
-  );
+  .patch(authController.protect, userController.updateBalance);
 
 module.exports = router;
