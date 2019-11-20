@@ -22,10 +22,6 @@ const childSchema = new mongoose.Schema({
     type: String,
     required: true
   },
-  items: {
-    type: Array,
-    default: []
-  },
   balance: {
     type: Number,
     min: [0, "Amount cannot be less than 0"],

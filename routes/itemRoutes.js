@@ -7,7 +7,9 @@ const router = express.Router();
 
 router
   .route("/")
-  .get(itemController.getAllItems)
+  .get(authController.protect, itemController.getAllItems)
   .post(authController.protect, itemController.createItem);
+
+router.route("/:id").get(authController.protect, itemController.getItem);
 
 module.exports = router;

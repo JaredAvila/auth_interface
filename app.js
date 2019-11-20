@@ -1,6 +1,8 @@
 const express = require("express");
 
-const errorHandler = require("./controllers/errorController");
+const globalErrorHandler = require("./controllers/errorController");
+const AppError = require("./utils/AppError");
+
 const userRouter = require("./routes/userRoutes");
 const itemRouter = require("./routes/itemRoutes");
 
@@ -20,6 +22,10 @@ app.use(express.json());
 app.use("/api/v1/users", userRouter);
 app.use("/api/v1/items", itemRouter);
 
-app.use(errorHandler);
+app.all("*", (req, res, next) => {
+  next(new AppError(`Can't find ${req.originalUrl} on this server`, 404));
+});
+
+app.use(globalErrorHandler);
 
 module.exports = app;
