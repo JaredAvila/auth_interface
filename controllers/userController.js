@@ -1,5 +1,6 @@
 const User = require("../models/userModel");
 const Child = require("../models/childAccountModel");
+const Item = require("../models/itemModel");
 const AppError = require("../utils/AppError");
 
 const catchAsync = require("../utils/catchAsync");
@@ -73,15 +74,11 @@ exports.updateProfile = catchAsync(async (req, res, next) => {
 });
 
 exports.deleteAccount = catchAsync(async (req, res, next) => {
-  // 1) get the user if exists
-  const user = await User.findOne({ email: req.user.email });
-  if (!user) {
-    return next(
-      new AppError("Unable to find your account. Please log in again", 404)
-    );
-  }
-  // 2) delete all users children
-  await Child.deleteMany({ parent: user._id });
+  // 1) delete all users children
+  await Child.deleteMany({ parent: req.user._id });
+
+  // 2) delete all users items
+  await Item.deleteMany({ user: req.user._id });
 
   // 3) delete account
   await User.deleteOne({ email: req.user.email });

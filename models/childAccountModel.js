@@ -6,10 +6,7 @@ const childSchema = new mongoose.Schema({
     required: [true, "Name is required"],
     trim: true
   },
-  photo: {
-    type: String,
-    default: "No photo"
-  },
+  photo: String,
   role: {
     type: String,
     default: "child"
