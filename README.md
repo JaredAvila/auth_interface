@@ -131,7 +131,7 @@ POST /api/v1/items/:id
 
 > ### Update Item (PROTECTED)
 
-POST /api/v1/items/:id
+PATCH /api/v1/items/:id
 
 body:
 
