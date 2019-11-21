@@ -10,6 +10,22 @@ router
   .get(authController.protect, itemController.getAllItems)
   .post(authController.protect, itemController.createItem);
 
-router.route("/:id").get(authController.protect, itemController.getItem);
+router
+  .route("/:id")
+  .get(
+    authController.protect,
+    itemController.verifyUserItem,
+    itemController.getItem
+  )
+  .patch(
+    authController.protect,
+    itemController.verifyUserItem,
+    itemController.updateItem
+  )
+  .delete(
+    authController.protect,
+    itemController.verifyUserItem,
+    itemController.deleteItem
+  );
 
 module.exports = router;

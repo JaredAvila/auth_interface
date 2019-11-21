@@ -18,17 +18,10 @@ exports.getAllItems = catchAsync(async (req, res, next) => {
 });
 
 exports.getItem = catchAsync(async (req, res, next) => {
-  const item = await Item.findById(req.params.id);
-  if (!item) {
-    next(new AppError("Couldn't find item", 404));
-  }
-  if (item.user !== req.user._id.toString()) {
-    return next(new AppError("This item does not belong to you", 403));
-  }
   res.status(200).json({
     status: "success",
     data: {
-      item
+      item: req.item
     }
   });
 });
@@ -61,10 +54,9 @@ exports.updateItem = catchAsync(async (req, res, next) => {
   ) {
     return next(new AppError("No changes were made. Try again", 400));
   }
-  const item = await Item.findById(req.params.id);
-  if (!item) {
-    return next(new AppError("Item not found", 404));
-  }
+
+  const item = req.item;
+
   if (req.body.name) {
     item.name = req.body.name;
   } else if (req.body.photo) {
@@ -86,15 +78,23 @@ exports.updateItem = catchAsync(async (req, res, next) => {
 });
 
 exports.deleteItem = catchAsync(async (req, res, next) => {
-  const item = await Item.findById(req.params.id);
-  if (!item) {
-    return next(new AppError("Item not found", 404));
-  }
-  await item.deleteOne({ _id: req.params.id });
+  await Item.deleteOne({ _id: req.params.id });
   res.status(200).json({
     status: "success",
     data: {
       message: "Item deleted"
     }
   });
+});
+
+exports.verifyUserItem = catchAsync(async (req, res, next) => {
+  const item = await Item.findById(req.params.id);
+  if (!item) {
+    return next(new AppError("Item not found", 404));
+  }
+  if (item.user !== req.user._id.toString()) {
+    return next(new AppError("This item does not belong to you", 403));
+  }
+  req.item = item;
+  next();
 });
