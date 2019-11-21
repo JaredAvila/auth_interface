@@ -1,6 +1,6 @@
 # Juvicount API interface
 
-## User Routes
+## USER ROUTES
 
 ---
 
@@ -63,11 +63,11 @@ DELETE: /api/v1/user/:id
 
 ---
 
-## Child Account Routes
+## CHILD ACCOUNT ROUTES
 
 ---
 
-> ### Create child account
+> ### Create child account (PROTECTED)
 
 POST: /api/v1/users/children
 
@@ -100,3 +100,48 @@ PATCH /api/v1/users/child/balance/:id
 body:
 
 - balance (required)
+
+---
+
+---
+
+## ITEM ROUTES
+
+---
+
+> ### Get Items (PROTECTED)
+
+GET /api/v1/items
+
+> ### Create Item (PROTECTED)
+
+POST /api/v1/items
+
+body:
+
+- name (required)
+- price (required)
+- photo
+- url
+- category (required)
+
+> ### Get Item (PROTECTED)
+
+POST /api/v1/items/:id
+
+> ### Update Item (PROTECTED)
+
+POST /api/v1/items/:id
+
+body:
+
+- name 
+- price
+- photo
+- url
+- category
+
+> ### Delete Item (PROTECTED)
+
+DELETE /api/v1/items/:id
+
