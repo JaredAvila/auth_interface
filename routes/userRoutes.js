@@ -2,7 +2,6 @@ const express = require("express");
 
 const userController = require("../controllers/userController");
 const authController = require("../controllers/authController");
-const childController = require("../controllers/childController");
 
 const router = express.Router();
 
@@ -11,45 +10,25 @@ router.route("/register").post(authController.register);
 router.route("/forgotPassword").post(authController.forgotPassword);
 router.route("/resetPassword/:token").patch(authController.resetPassword);
 
-router.route("/").get(userController.getAllUsers);
+router.use(authController.protect);
 
 router
-  .route("/user")
-  .patch(authController.protect, userController.updateProfile)
-  .delete(authController.protect, userController.deleteAccount);
+  .route("/me")
+  .get(userController.getMe, userController.getUser)
+  .patch(userController.updateMe)
+  .delete(userController.deleteMe);
+
+router.use(authController.restrictTo("admin"));
 
 router
-  .route("/child")
-  .post(
-    authController.protect,
-    childController.setParent,
-    childController.createChild
-  );
+  .route("/")
+  .get(userController.getAllUsers)
+  .post(userController.createUser);
 
 router
-  .route("/child/:id")
-  .get(
-    authController.protect,
-    childController.verifyParent,
-    childController.getChild
-  )
-  .patch(
-    authController.protect,
-    childController.verifyParent,
-    userController.updateChild
-  )
-  .delete(
-    authController.protect,
-    childController.verifyParent,
-    userController.deleteChild
-  );
-
-router
-  .route("/child/balance/:id")
-  .patch(
-    authController.protect,
-    childController.verifyParent,
-    userController.updateBalance
-  );
+  .route("/:id")
+  .get(userController.getUser)
+  .patch(userController.updateUser)
+  .delete(userController.deleteUser);
 
 module.exports = router;
