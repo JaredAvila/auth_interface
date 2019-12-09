@@ -6,6 +6,7 @@ const { promisify } = require("util");
 const sendEmail = require("../utils/email");
 const crypto = require("crypto");
 const catchAsync = require("../utils/catchAsync");
+const factory = require("./handlerFactory");
 
 exports.protect = catchAsync(async (req, res, next) => {
   // 1) get token and check that it exists
@@ -44,6 +45,17 @@ exports.protect = catchAsync(async (req, res, next) => {
   next();
 });
 
+exports.restrictTo = (...roles) => {
+  return (req, res, next) => {
+    if (!roles.includes(req.user.role)) {
+      return next(
+        new AppError("You do not have permission to perform this action", 403)
+      );
+    }
+    next();
+  };
+};
+
 exports.register = catchAsync(async (req, res, next) => {
   // 1) create new user from form data
   const newUser = await User.create({
@@ -62,7 +74,7 @@ exports.register = catchAsync(async (req, res, next) => {
   });
 
   // 3.) send back token
-  res.status(200).json({
+  res.status(201).json({
     status: "success",
     token
   });
@@ -86,22 +98,23 @@ exports.login = catchAsync(async (req, res, next) => {
   });
 });
 
-exports.registerChild = catchAsync(async (req, res, next) => {
-  // create new child account from form data
-  const child = await Child.create({
-    name: req.body.name,
-    photo: req.body.photo,
-    parent: req.user._id
-  });
+exports.registerChild = factory.createOne(Child);
+// exports.registerChild = catchAsync(async (req, res, next) => {
+//   // create new child account from form data
+//   const child = await Child.create({
+//     name: req.body.name,
+//     photo: req.body.photo,
+//     parent: req.user._id
+//   });
 
-  // send back token and user data
-  res.status(200).json({
-    status: "success",
-    data: {
-      child
-    }
-  });
-});
+//   // send back token and user data
+//   res.status(200).json({
+//     status: "success",
+//     data: {
+//       child
+//     }
+//   });
+// });
 
 exports.forgotPassword = catchAsync(async (req, res, next) => {
   const user = await User.findOne({ email: req.body.email });

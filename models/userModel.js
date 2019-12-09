@@ -3,50 +3,62 @@ const validator = require("validator");
 const bcrypt = require("bcryptjs");
 const crypto = require("crypto");
 
-const userSchema = new mongoose.Schema({
-  name: {
-    type: String,
-    required: [true, "Name is required"],
-    trim: true
+const userSchema = new mongoose.Schema(
+  {
+    name: {
+      type: String,
+      required: [true, "Name is required"],
+      trim: true
+    },
+    email: {
+      type: String,
+      required: [true, "Email is required"],
+      unique: true,
+      lowercase: true,
+      validate: [validator.isEmail, "Enter a valid email address"]
+    },
+    password: {
+      type: String,
+      required: [true, "Password is required"],
+      minlength: [8, "Password must be at least 8 characters"],
+      select: false
+    },
+    password2: {
+      type: String,
+      required: [true, "Please confirm your password"],
+      validate: {
+        validator: function(val) {
+          return val === this.password;
+        },
+        message: "Passwords do not match"
+      }
+    },
+    photo: {
+      type: String
+    },
+    role: {
+      type: String,
+      enum: ["parent", "admin"],
+      default: "parent"
+    },
+    passwordChangedAt: Date,
+    createdAt: {
+      type: Date,
+      default: Date.now()
+    },
+    passwordResetToken: String,
+    passwordResetExpires: Date
   },
-  email: {
-    type: String,
-    required: [true, "Email is required"],
-    unique: true,
-    lowercase: true,
-    validate: [validator.isEmail, "Enter a valid email address"]
-  },
-  password: {
-    type: String,
-    required: [true, "Password is required"],
-    minlength: [8, "Password must be at least 8 characters"],
-    select: false
-  },
-  password2: {
-    type: String,
-    required: [true, "Please confirm your password"],
-    validate: {
-      validator: function(val) {
-        return val === this.password;
-      },
-      message: "Passwords do not match"
-    }
-  },
-  photo: {
-    type: String
-  },
-  role: {
-    type: String,
-    enum: ["parent", "admin"],
-    default: "parent"
-  },
-  passwordChangedAt: Date,
-  createdAt: {
-    type: Date,
-    default: Date.now()
-  },
-  passwordResetToken: String,
-  passwordResetExpires: Date
+  {
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true }
+  }
+);
+
+userSchema.virtual("children", {
+  ref: "Child",
+  foreignField: "parent",
+  localField: "_id"
 });
 
 userSchema.pre("save", async function(next) {
@@ -61,6 +73,13 @@ userSchema.pre("save", function(next) {
   if (!this.isModified("password") || this.isNew) return next();
 
   this.passwordChangedAt = Date.now() - 1000;
+  next();
+});
+
+userSchema.pre(/^find/, function(next) {
+  this.populate({
+    path: "children"
+  });
   next();
 });
 

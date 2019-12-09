@@ -2,6 +2,7 @@ const express = require("express");
 
 const userController = require("../controllers/userController");
 const authController = require("../controllers/authController");
+const childController = require("../controllers/childController");
 
 const router = express.Router();
 
@@ -18,25 +19,28 @@ router
   .delete(authController.protect, userController.deleteAccount);
 
 router
-  .route("/children")
-  .get(authController.protect, userController.getAllChildren)
-  .post(authController.protect, authController.registerChild);
+  .route("/child")
+  .post(
+    authController.protect,
+    childController.setParent,
+    childController.createChild
+  );
 
 router
   .route("/child/:id")
   .get(
     authController.protect,
-    userController.verifyParent,
-    userController.getChild
+    childController.verifyParent,
+    childController.getChild
   )
   .patch(
     authController.protect,
-    userController.verifyParent,
+    childController.verifyParent,
     userController.updateChild
   )
   .delete(
     authController.protect,
-    userController.verifyParent,
+    childController.verifyParent,
     userController.deleteChild
   );
 
@@ -44,7 +48,7 @@ router
   .route("/child/balance/:id")
   .patch(
     authController.protect,
-    userController.verifyParent,
+    childController.verifyParent,
     userController.updateBalance
   );
 

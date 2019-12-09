@@ -16,14 +16,21 @@ const childSchema = new mongoose.Schema({
     default: Date.now()
   },
   parent: {
-    type: String,
-    required: true
+    type: mongoose.Schema.ObjectId,
+    ref: "User",
+    required: [true, "A child account must have a parent"]
   },
   balance: {
     type: Number,
     min: [0, "Amount cannot be less than 0"],
     default: 0
   }
+});
+
+childSchema.virtual("items", {
+  ref: "Item",
+  foreignField: "child",
+  localField: "_id"
 });
 
 const Child = mongoose.model("Child", childSchema);

@@ -17,15 +17,15 @@ exports.getAllUsers = catchAsync(async (req, res, next) => {
   });
 });
 
-exports.getAllChildren = catchAsync(async (req, res, next) => {
-  const children = await Child.find({ parent: req.user._id });
-  res.status(200).json({
-    status: "success",
-    data: {
-      children
-    }
-  });
-});
+// exports.getAllChildren = catchAsync(async (req, res, next) => {
+//   const children = await Child.find({ parent: req.user._id });
+//   res.status(200).json({
+//     status: "success",
+//     data: {
+//       children
+//     }
+//   });
+// });
 
 exports.updateProfile = catchAsync(async (req, res, next) => {
   // check for empty submission
@@ -89,15 +89,6 @@ exports.deleteAccount = catchAsync(async (req, res, next) => {
   });
 });
 
-exports.getChild = catchAsync(async (req, res, next) => {
-  res.status(200).json({
-    status: "success",
-    data: {
-      child: req.child
-    }
-  });
-});
-
 exports.updateChild = catchAsync(async (req, res, next) => {
   // checks for empty inputs
   if (!req.body.name && !req.body.photo) {
@@ -148,18 +139,6 @@ exports.updateBalance = catchAsync(async (req, res, next) => {
       child
     }
   });
-});
-
-exports.verifyParent = catchAsync(async (req, res, next) => {
-  const child = await Child.findById(req.params.id);
-  if (!child) {
-    return next(new AppError("Child not found", 404));
-  }
-  if (child.parent !== req.user._id.toString()) {
-    return next(new AppError("This child does not belong to you", 403));
-  }
-  req.child = child;
-  next();
 });
 
 const validateEmail = email => {

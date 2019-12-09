@@ -20,7 +20,11 @@ const itemSchema = new mongoose.Schema({
       message: "This category does not exist"
     }
   },
-  user: String
+  child: {
+    type: mongoose.Schema.ObjectId,
+    ref: "Child",
+    required: [true, "An item must belong to a child"]
+  }
 });
 
 const Item = mongoose.model("Item", itemSchema);
