@@ -1,9 +1,57 @@
 const User = require("../models/userModel");
 const Child = require("../models/childAccountModel");
+const multer = require("multer");
+const sharp = require("sharp");
 
 const AppError = require("../utils/AppError");
 const catchAsync = require("../utils/catchAsync");
 const factory = require("./handlerFactory");
+
+// const multerStorage = multer.diskStorage({
+//   destination: (req, file, cb) => {
+//     cb(null, "public/img/users");
+//   },
+//   filename: (req, file, cb) => {
+//     const ext = file.mimetype.split("/")[1];
+//     cb(null, `user-${req.user.id}-${Date.now()}.${ext}`);
+//   }
+// });
+
+const multerStorage = multer.memoryStorage();
+
+const multerFitler = (req, file, cb) => {
+  if (file.mimetype.startsWith("image")) {
+    cb(null, true);
+  } else {
+    cb(
+      new AppError("Not an image. Please upload an image file only.", 400),
+      false
+    );
+  }
+};
+const upload = multer({
+  storage: multerStorage,
+  fileFilter: multerFitler
+});
+
+exports.uploadPhoto = upload.single("photo");
+
+exports.resizePhoto = (req, res, next) => {
+  if (!req.file) return next();
+  if (req.file.size > 1100000)
+    return next(
+      new AppError("Filesize too large. Please uplad images under 1.0mb")
+    );
+
+  req.file.filename = `user-${req.user.id}-${Date.now()}.jpeg`;
+
+  sharp(req.file.buffer)
+    .resize(500, 500)
+    .toFormat("jpeg")
+    .jpeg({ quality: 90 })
+    .toFile(`public/img/users/${req.file.filename}`);
+  next();
+};
 
 const filterBody = (obj, ...authorizedInput) => {
   const newObj = {};
@@ -32,7 +80,8 @@ exports.updateMe = catchAsync(async (req, res, next) => {
     return next(new AppError("This route is not for updating passwords", 400));
   }
   // 2.) sanitize body
-  const filteredBody = filterBody(req.body, "name", "email", "photo");
+  const filteredBody = filterBody(req.body, "name", "email");
+  if (req.file) filteredBody.photo = req.file.filename;
   // 3. update user
   const updatedUser = await User.findByIdAndUpdate(req.user.id, filteredBody, {
     new: true,
