@@ -1,4 +1,9 @@
 const express = require("express");
+const rateLimit = require("express-rate-limit");
+const helmet = require("helmet");
+const mongoSanitize = require("express-mongo-sanitize");
+const xss = require("xss-clean");
+const hpp = require("hpp");
 
 const globalErrorHandler = require("./controllers/errorController");
 const AppError = require("./utils/AppError");
@@ -51,6 +56,7 @@ app.all("*", (req, res, next) => {
   next(new AppError(`Can't find ${req.originalUrl} on this server`, 404));
 });
 
+// Global error handling
 app.use(globalErrorHandler);
 
 module.exports = app;
