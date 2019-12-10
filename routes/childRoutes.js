@@ -2,8 +2,11 @@ const express = require("express");
 
 const authController = require("../controllers/authController");
 const childController = require("../controllers/childController");
+const itemRouter = require("./itemRoutes");
 
 const router = express.Router();
+
+router.use("/:childId/item", itemRouter);
 
 router
   .route("/")

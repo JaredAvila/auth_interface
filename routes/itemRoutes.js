@@ -3,29 +3,21 @@ const express = require("express");
 const authController = require("../controllers/authController");
 const itemController = require("../controllers/itemController");
 
-const router = express.Router();
+const router = express.Router({ mergeParams: true });
 
+router.use(
+  authController.protect,
+  authController.restrictTo("admin", "parent")
+);
 router
   .route("/")
-  .get(authController.protect, itemController.getAllItems)
-  .post(authController.protect, itemController.createItem);
+  .get(authController.restrictTo("admin"), itemController.getAllItems)
+  .post(itemController.setChildUserIds, itemController.createItem);
 
 router
   .route("/:id")
-  .get(
-    authController.protect,
-    itemController.verifyUserItem,
-    itemController.getItem
-  )
-  .patch(
-    authController.protect,
-    itemController.verifyUserItem,
-    itemController.updateItem
-  )
-  .delete(
-    authController.protect,
-    itemController.verifyUserItem,
-    itemController.deleteItem
-  );
+  .get(itemController.verifyUser, itemController.getItem)
+  .patch(itemController.verifyUser, itemController.updateItem)
+  .delete(itemController.verifyUser, itemController.deleteItem);
 
 module.exports = router;

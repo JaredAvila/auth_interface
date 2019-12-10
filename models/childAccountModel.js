@@ -33,6 +33,14 @@ childSchema.virtual("items", {
   localField: "_id"
 });
 
+childSchema.pre(/^find/, function(next) {
+  this.populate({
+    path: "items"
+  });
+
+  next();
+});
+
 const Child = mongoose.model("Child", childSchema);
 
 module.exports = Child;

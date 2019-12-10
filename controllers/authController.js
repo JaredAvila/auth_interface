@@ -1,12 +1,10 @@
 const User = require("../models/userModel");
-const Child = require("../models/childAccountModel");
 const jwt = require("jsonwebtoken");
 const AppError = require("../utils/AppError");
 const { promisify } = require("util");
 const sendEmail = require("../utils/email");
 const crypto = require("crypto");
 const catchAsync = require("../utils/catchAsync");
-const factory = require("./handlerFactory");
 
 exports.protect = catchAsync(async (req, res, next) => {
   // 1) get token and check that it exists
@@ -97,24 +95,6 @@ exports.login = catchAsync(async (req, res, next) => {
     token
   });
 });
-
-exports.registerChild = factory.createOne(Child);
-// exports.registerChild = catchAsync(async (req, res, next) => {
-//   // create new child account from form data
-//   const child = await Child.create({
-//     name: req.body.name,
-//     photo: req.body.photo,
-//     parent: req.user._id
-//   });
-
-//   // send back token and user data
-//   res.status(200).json({
-//     status: "success",
-//     data: {
-//       child
-//     }
-//   });
-// });
 
 exports.forgotPassword = catchAsync(async (req, res, next) => {
   const user = await User.findOne({ email: req.body.email });
