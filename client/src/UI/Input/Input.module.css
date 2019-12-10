@@ -1,5 +1,12 @@
-.InputElement {}
+.InputElement {
+    border: none;
+    border-bottom: 3px solid #44ad44;
+    outline: none;
+    font-size: 1.2rem;
+    margin: 10px 0;
+    background-color: transparent;
+}
 
 .Invalid {
-    background-color: rgba(255, 0, 0, 0.247);
+    border-bottom: 3px solid #e77272;
 }

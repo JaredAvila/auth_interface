@@ -1,12 +1,16 @@
 .Landing {
     height: 92vh;
-    background: linear-gradient(rgba(0, 0, 0, 0.26), rgba(128, 128, 128, 0.267)), url("../../assets/img/UI/landing.jpg");
+    display: flex;
+    flex-flow: column;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(rgba(29, 29, 29, 0.7), rgba(32, 32, 32, 0.5)), url("../../assets/img/UI/landing.jpg");
     background-size: cover;
     text-align: center;
 }
 
 .Landing h1 {
-    color: #b375ee;
+    color: #dea4ff;
     font-family: 'Bowlby One SC', cursive;
     letter-spacing: .5rem;
     font-size: 4.5rem;
@@ -15,6 +19,20 @@
 .Buttons a {
     text-decoration: none;
     padding: 10px 20px;
-    background-color: green;
+    background-color: #44ad44;
     color: white;
-    mar
+    margin: 5px 15px;
+    border-radius: 2px;
+    font-size: 1.2rem;
+}
+
+@media(max-width: 500px) {
+    .Landing {
+        height: 93.5vh;
+    }
+    .Landing h1 {
+        letter-spacing: .3rem;
+        font-size: 2.5rem;
+        margin-bottom: 20px;
+    }
+}

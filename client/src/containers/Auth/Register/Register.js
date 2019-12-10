@@ -119,10 +119,12 @@ class Register extends Component {
           <form onSubmit={this.onSubmitHandler}>
             {form}
             <input className={styles.Btn} type="submit" value="Sign In" />
-            {this.state.noMatch ? <p>Passwords do not match</p> : null}
+            {this.state.noMatch ? (
+              <p className={styles.ErrorMsg}>Passwords do not match</p>
+            ) : null}
           </form>
           <p className={styles.Accnt}>Already have an account?</p>
-          <NavLink className={styles.Link} to={"/"}>
+          <NavLink className={styles.Link} to={"/login"}>
             SIGN IN
           </NavLink>
         </div>
