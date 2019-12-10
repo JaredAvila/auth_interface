@@ -7,7 +7,10 @@ const itemSchema = new mongoose.Schema(
       required: [true, "Item name is required"],
       trim: true
     },
-    photo: String,
+    photo: {
+      type: String,
+      default: "default.jpg"
+    },
     url: String,
     price: {
       type: Number,

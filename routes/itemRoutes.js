@@ -12,12 +12,22 @@ router.use(
 router
   .route("/")
   .get(authController.restrictTo("admin"), itemController.getAllItems)
-  .post(itemController.setChildUserIds, itemController.createItem);
+  .post(
+    itemController.uploadPhoto,
+    itemController.resizePhoto,
+    itemController.setChildUserIds,
+    itemController.createItem
+  );
 
 router
   .route("/:id")
   .get(itemController.verifyUser, itemController.getItem)
-  .patch(itemController.verifyUser, itemController.updateItem)
+  .patch(
+    itemController.uploadPhoto,
+    itemController.resizePhoto,
+    itemController.verifyUser,
+    itemController.updateItem
+  )
   .delete(itemController.verifyUser, itemController.deleteItem);
 
 module.exports = router;
