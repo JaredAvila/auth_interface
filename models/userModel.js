@@ -80,6 +80,7 @@ userSchema.pre(/^find/, function(next) {
   this.populate({
     path: "children"
   });
+
   next();
 });
 
