@@ -8,7 +8,6 @@ const NavItems = props => {
     <ul className={styles.NavItems} onClick={props.clicked}>
       <NavItem link="/login">Login</NavItem>
       <NavItem link="/register">Register</NavItem>
-      <NavItem link="/wallet">Wallet</NavItem>
     </ul>
   );
 };

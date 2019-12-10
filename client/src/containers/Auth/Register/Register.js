@@ -9,6 +9,19 @@ import * as styles from "./Register.module.css";
 class Register extends Component {
   state = {
     controls: {
+      name: {
+        elementType: "input",
+        elementConfig: {
+          type: "text",
+          placeholder: "Name"
+        },
+        value: "",
+        valid: false,
+        touched: false,
+        validation: {
+          required: true
+        }
+      },
       email: {
         elementType: "input",
         elementConfig: {
