@@ -9,6 +9,7 @@ const sendDevError = (err, res) => {
   });
 };
 const sendProdError = (err, res) => {
+  console.log("prod error: ", err.message);
   // Operational, trusted error: send message to client
   if (err.isOperational) {
     res.status(err.statusCode).json({

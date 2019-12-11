@@ -65,7 +65,6 @@ class Login extends Component {
     );
     //Submit to be authenticated
     this.setState({ username: "", password: "" });
-    this.props.history.push("/wallet");
   };
 
   render() {

@@ -39,14 +39,23 @@ app.use(xss());
 // Prevent parameter pollution
 app.use(hpp());
 
-// app.use(function(req, res, next) {
-//   res.header("Access-Control-Allow-Origin", "http://localhost:3000");
-//   res.header(
+// app.use((req, res, next) => {
+//   res.setHeader("Access-Control-Allow-Origin", "*");
+//   res.setHeader("Access-Control-Allow-Methods", "OPTIONS,GET,PUT,POST,DELETE");
+//   res.setHeader(
 //     "Access-Control-Allow-Headers",
 //     "Origin, X-Requested-With, Content-Type, Accept"
 //   );
 //   next();
 // });
+
+app.use(function(req, res, next) {
+  res.header("Access-Control-Allow-Origin", "http://localhost:3000");
+  res.header("Access-Control-Allow-Methods", "OPTIONS, GET, PUT, POST, DELETE");
+  res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
+
+  next();
+});
 
 app.use("/api/v1/user", userRouter);
 app.use("/api/v1/item", itemRouter);

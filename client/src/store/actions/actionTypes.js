@@ -1,0 +1,4 @@
+export const AUTH_START = "AUTH_START";
+export const REGISTER_SUCCESS = "REGISTER_SUCCESS";
+export const REGISTER_FAIL = "REGISTER_FAIL";
+export const AUTH_LOGOUT = "AUTH_LOGOUT";

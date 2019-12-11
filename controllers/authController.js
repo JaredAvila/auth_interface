@@ -61,9 +61,7 @@ exports.register = catchAsync(async (req, res, next) => {
     email: req.body.email,
     password: req.body.password,
     password2: req.body.password2,
-    passwordChangedAt: req.body.passwordChangedAt,
-    role: req.body.role,
-    photo: req.body.photo
+    passwordChangedAt: req.body.passwordChangedAt
   });
 
   // 2.) create and sign token

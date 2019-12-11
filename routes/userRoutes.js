@@ -10,29 +10,48 @@ router.route("/register").post(authController.register);
 router.route("/forgotPassword").post(authController.forgotPassword);
 router.route("/resetPassword/:token").patch(authController.resetPassword);
 
-router.use(authController.protect);
+// router.use(authController.protect);
 
 router
   .route("/me")
-  .get(userController.getMe, userController.getUser)
+  .get(authController.protect, userController.getMe, userController.getUser)
   .patch(
+    authController.protect,
     userController.uploadPhoto,
     userController.resizePhoto,
     userController.updateMe
   )
-  .delete(userController.deleteMe);
-
-router.use(authController.restrictTo("admin"));
+  .delete(authController.protect, userController.deleteMe);
 
 router
   .route("/")
-  .get(userController.getAllUsers)
-  .post(userController.createUser);
+  .get(
+    authController.protect,
+    authController.restrictTo("admin"),
+    userController.getAllUsers
+  )
+  .post(
+    authController.protect,
+    authController.restrictTo("admin"),
+    userController.createUser
+  );
 
 router
   .route("/:id")
-  .get(userController.getUser)
-  .patch(userController.updateUser)
-  .delete(userController.deleteUser);
+  .get(
+    authController.protect,
+    authController.restrictTo("admin"),
+    userController.getUser
+  )
+  .patch(
+    authController.protect,
+    authController.restrictTo("admin"),
+    userController.updateUser
+  )
+  .delete(
+    authController.protect,
+    authController.restrictTo("admin"),
+    userController.deleteUser
+  );
 
 module.exports = router;
