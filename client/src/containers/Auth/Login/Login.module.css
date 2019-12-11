@@ -2,11 +2,25 @@
     color: #474747;
     width: 500px;
     margin: auto;
-    padding: 20px;
+    padding: 70px 0px;
+}
+
+.RegBox {
+    background-color: #ffffff;
+    padding: 50px;
+    border-radius: 2px;
+    box-shadow: 0 2px 19px rgba(219, 219, 219, 0.582);
+}
+
+.Login h1 {
+    font-family: 'Bowlby One SC', cursive;
+    letter-spacing: .5rem;
+    font-size: 4rem;
 }
 
 .Login h4 {
     font-size: 2rem;
+    margin-bottom: 40px;
 }
 
 .Login form {
@@ -33,8 +47,8 @@
     outline: none;
     border-radius: 25px;
     margin: 10px 0;
-    padding: 5px 25px;
-    font-size: 1.2rem;
+    padding: 10px 25px;
+    font-size: 1.1rem;
 }
 
 .Login input.Btn:hover {
@@ -60,8 +74,21 @@
     font-size: 1rem;
 }
 
+.ErrorMsg {
+    color: rgb(175, 52, 52);
+    font-weight: bold;
+    margin: auto;
+    font-size: 1rem;
+}
+
 @media only screen and (max-width: 500px) {
     .Login {
         width: 80%;
+    }
+    .Login h4 {
+        font-size: 1.2rem;
+    }
+    .RegBox {
+        padding: 20px;
     }
 }

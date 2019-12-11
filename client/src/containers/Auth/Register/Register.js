@@ -131,7 +131,7 @@ class Register extends Component {
     });
     return (
       <div className={styles.Register}>
-        <div>
+        <div className={styles.RegBox}>
           <h4>Create an account</h4>
           <form onSubmit={this.onSubmitHandler}>
             {form}

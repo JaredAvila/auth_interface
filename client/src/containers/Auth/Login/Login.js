@@ -3,8 +3,10 @@ import React, { Component } from "react";
 import { NavLink } from "react-router-dom";
 import Input from "../../../UI/Input/Input";
 import { checkValidation } from "../../../helpers/validation";
+import { connect } from "react-redux";
 
 import * as styles from "./Login.module.css";
+import * as actions from "../../../store/actions/";
 
 class Login extends Component {
   state = {
@@ -60,10 +62,11 @@ class Login extends Component {
 
   onSubmitHandler = e => {
     e.preventDefault();
-    console.log(
-      `Username: ${this.state.controls["email"].value} \n Password: ${this.state.controls["password"].value}`
-    );
     //Submit to be authenticated
+    this.props.onLogin(
+      this.state.controls["email"].value,
+      this.state.controls["password"].value
+    );
     this.setState({ username: "", password: "" });
   };
 
@@ -91,18 +94,33 @@ class Login extends Component {
     });
     return (
       <div className={styles.Login}>
-        <h4>Sign In</h4>
-        <form onSubmit={this.onSubmitHandler}>
-          {form}
-          <input className={styles.Btn} type="submit" value="Log In" />
-        </form>
-        <p className={styles.Accnt}>Don't have an account?</p>
-        <NavLink className={styles.Link} to={"/register"}>
-          Create one now
-        </NavLink>
+        <div className={styles.RegBox}>
+          <h4>Sign In</h4>
+          <form onSubmit={this.onSubmitHandler}>
+            {form}
+            <input className={styles.Btn} type="submit" value="Log In" />
+          </form>
+          <p className={styles.Accnt}>Don't have an account?</p>
+          <NavLink className={styles.Link} to={"/register"}>
+            Create one now
+          </NavLink>
+        </div>
       </div>
     );
   }
 }
 
-export default Login;
+const mapSateToProps = state => {
+  return {
+    loading: state.auth.loading,
+    isAuth: state.auth.isAuth
+  };
+};
+
+const mapDispatchToProps = dispatch => {
+  return {
+    onLogin: (email, password) => dispatch(actions.login(email, password))
+  };
+};
+
+export default connect(mapSateToProps, mapDispatchToProps)(Login);

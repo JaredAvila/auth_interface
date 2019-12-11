@@ -4,7 +4,8 @@ const initialState = {
   token: localStorage.getItem("token"),
   isAuth: false,
   loading: true,
-  user: null
+  user: null,
+  error: null
 };
 
 const authStart = (state, action) => {
@@ -16,20 +17,30 @@ const regSuccess = (state, action) => {
   const newState = {
     ...state,
     loading: false,
-    token: action.token,
+    token: action.payload.token,
     isAuth: true
   };
-  localStorage.setItem("token", action.token);
   return newState;
 };
 
-const regFail = (state, action) => {
+const loginSuccess = (state, action) => {
+  const newState = {
+    ...state,
+    loading: false,
+    token: action.payload.token,
+    isAuth: true
+  };
+  return newState;
+};
+
+const authFail = (state, action) => {
   localStorage.removeItem("token");
   return {
     ...state,
     token: null,
     isAuth: false,
-    loading: false
+    loading: false,
+    error: action.payload
   };
 };
 
@@ -50,8 +61,10 @@ const authReducer = (state = initialState, action) => {
       return authStart(state, action);
     case actionTypes.REGISTER_SUCCESS:
       return regSuccess(state, action);
-    case actionTypes.REGISTER_FAIL:
-      return regFail(state, action);
+    case actionTypes.LOGIN_SUCCESS:
+      return loginSuccess(state, action);
+    case actionTypes.AUTH_FAIL:
+      return authFail(state, action);
     case actionTypes.AUTH_LOGOUT:
       return authLogout(state, action);
     default:
