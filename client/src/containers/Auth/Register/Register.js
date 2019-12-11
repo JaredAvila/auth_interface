@@ -5,6 +5,8 @@ import { NavLink } from "react-router-dom";
 import { checkValidation } from "../../../helpers/validation";
 import { connect } from "react-redux";
 
+import Spinner from "../../../UI/Spinner/Spinner";
+
 import * as styles from "./Register.module.css";
 import * as actions from "../../../store/actions/";
 
@@ -129,24 +131,36 @@ class Register extends Component {
         />
       );
     });
-    return (
-      <div className={styles.Register}>
-        <div className={styles.RegBox}>
-          <h4>Create an account</h4>
-          <form onSubmit={this.onSubmitHandler}>
-            {form}
-            <input className={styles.Btn} type="submit" value="Sign In" />
-            {this.state.noMatch ? (
-              <p className={styles.ErrorMsg}>Passwords do not match</p>
-            ) : null}
-          </form>
-          <p className={styles.Accnt}>Already have an account?</p>
-          <NavLink className={styles.Link} to={"/login"}>
-            SIGN IN
-          </NavLink>
+
+    let errorMsg = null;
+    if (this.props.error) {
+      errorMsg = <p className={styles.ErrorMsg}>{this.props.error.message}</p>;
+    }
+    if (this.state.noMatch) {
+      errorMsg = <p className={styles.ErrorMsg}>Passwords do not match</p>;
+    }
+    let markup = <Spinner />;
+
+    if (!this.props.loading) {
+      markup = (
+        <div className={styles.Register}>
+          <div className={styles.RegBox}>
+            <h4>Create an account</h4>
+            {errorMsg}
+            <form onSubmit={this.onSubmitHandler}>
+              {form}
+              <input className={styles.Btn} type="submit" value="Sign In" />
+            </form>
+            <p className={styles.Accnt}>Already have an account?</p>
+            <NavLink className={styles.Link} to={"/login"}>
+              SIGN IN
+            </NavLink>
+          </div>
         </div>
-      </div>
-    );
+      );
+    }
+
+    return markup;
   }
 }
 
@@ -160,7 +174,8 @@ const mapDispatchToProps = dispatch => {
 const mapStateToProps = state => {
   return {
     loading: state.auth.loading,
-    isAuth: state.auth.isAuth
+    isAuth: state.auth.isAuth,
+    error: state.auth.error
   };
 };
 

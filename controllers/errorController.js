@@ -9,7 +9,6 @@ const sendDevError = (err, res) => {
   });
 };
 const sendProdError = (err, res) => {
-  console.log("prod error: ", err.message);
   // Operational, trusted error: send message to client
   if (err.isOperational) {
     res.status(err.statusCode).json({
@@ -35,9 +34,7 @@ const handleCastErrorDB = err => {
 };
 
 const handleDuplicateDB = err => {
-  const message = `Duplicate field value: ${
-    err.errmsg.match(/(["'])(\\?.)*?\1/)[0]
-  }. please use another value.`;
+  const message = `${err.errmsg.match(/(["'])(\\?.)*?\1/)[0]} already exists`;
   return new AppError(message, 400);
 };
 
@@ -61,6 +58,7 @@ module.exports = (err, req, res, next) => {
     sendDevError(err, res);
   } else if (process.env.NODE_ENV === "production") {
     let error = { ...err };
+    error.message = err.message;
     if (error.name === "CastError") error = handleCastErrorDB(error);
     if (error.code === 11000) error = handleDuplicateDB(error);
     if (error.name === "ValidationError")

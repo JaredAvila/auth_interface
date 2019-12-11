@@ -24,7 +24,6 @@ const createAndSendToken = (user, statusCode, res) => {
   res.cookie("jwt", token, cookieOptions);
 
   user.password = undefined;
-
   res.status(statusCode).json({
     status: "success",
     token,
@@ -184,10 +183,10 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
 
 exports.updatePassword = catchAsync(async (req, res, next) => {
   // 1) get user with password
-  const user = await User.findById(req.user.id).select('+password');
+  const user = await User.findById(req.user.id).select("+password");
 
   // 2) check if posted pass is correct
-  if(!user || !(await user.passwordCheck(req.body.password, user.password))){
+  if (!user || !(await user.passwordCheck(req.body.password, user.password))) {
     return next(new AppError("Please enter correct password", 401));
   }
 

@@ -4,6 +4,7 @@ const helmet = require("helmet");
 const mongoSanitize = require("express-mongo-sanitize");
 const xss = require("xss-clean");
 const hpp = require("hpp");
+const cookieParser = require("cookie-parser");
 
 const globalErrorHandler = require("./controllers/errorController");
 const AppError = require("./utils/AppError");
@@ -29,6 +30,7 @@ app.use("/api", limiter);
 
 // Body parser, reading data into body
 app.use(express.json({ limit: "10kb" }));
+app.use(cookieParser());
 
 // data sanitization against NoSQL query injection
 app.use(mongoSanitize());
@@ -39,21 +41,19 @@ app.use(xss());
 // Prevent parameter pollution
 app.use(hpp());
 
-// app.use((req, res, next) => {
-//   res.setHeader("Access-Control-Allow-Origin", "*");
-//   res.setHeader("Access-Control-Allow-Methods", "OPTIONS,GET,PUT,POST,DELETE");
-//   res.setHeader(
-//     "Access-Control-Allow-Headers",
-//     "Origin, X-Requested-With, Content-Type, Accept"
-//   );
-//   next();
-// });
-
+// Set headers
 app.use(function(req, res, next) {
   res.header("Access-Control-Allow-Origin", "http://localhost:3000");
   res.header("Access-Control-Allow-Methods", "OPTIONS, GET, PUT, POST, DELETE");
   res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
+  res.header("Access-Control-Allow-Credentials", "true");
 
+  next();
+});
+
+// Development middleware -- delete when finished
+app.use((req, res, next) => {
+  console.log(req.cookies);
   next();
 });
 

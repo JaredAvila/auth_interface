@@ -39,7 +39,7 @@
 } */
 
 .Login input.Btn {
-    background-color: #dea4ff;
+    background-color: rgb(222, 164, 255);
     width: fit-content;
     border: none;
     cursor: pointer;

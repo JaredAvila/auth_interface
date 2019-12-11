@@ -1,5 +1,6 @@
 import * as actionTypes from "./actionTypes";
 import axios from "axios";
+import axiosInst from "../../helpers/axiosInstance";
 
 export const register = (
   name,
@@ -46,12 +47,11 @@ export const login = (email, password) => async dispatch => {
   const body = JSON.stringify({ email, password });
 
   try {
-    const res = await axios.post(
+    const res = await axiosInst.post(
       "http://localhost:8000/api/v1/user/login",
       body,
       config
     );
-    console.log(res);
     dispatch({
       type: actionTypes.LOGIN_SUCCESS,
       payload: res.data.token

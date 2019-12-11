@@ -1,9 +1,9 @@
 import * as actionTypes from "../actions/actionTypes";
 
 const initialState = {
-  token: localStorage.getItem("token"),
+  token: null,
   isAuth: false,
-  loading: true,
+  loading: false,
   user: null,
   error: null
 };
@@ -34,7 +34,6 @@ const loginSuccess = (state, action) => {
 };
 
 const authFail = (state, action) => {
-  localStorage.removeItem("token");
   return {
     ...state,
     token: null,

@@ -1,9 +1,11 @@
 import React, { Component } from "react";
 
 import { NavLink } from "react-router-dom";
-import Input from "../../../UI/Input/Input";
 import { checkValidation } from "../../../helpers/validation";
 import { connect } from "react-redux";
+
+import Spinner from "../../../UI/Spinner/Spinner";
+import Input from "../../../UI/Input/Input";
 
 import * as styles from "./Login.module.css";
 import * as actions from "../../../store/actions/";
@@ -92,28 +94,38 @@ class Login extends Component {
         />
       );
     });
-    return (
-      <div className={styles.Login}>
-        <div className={styles.RegBox}>
-          <h4>Sign In</h4>
-          <form onSubmit={this.onSubmitHandler}>
-            {form}
-            <input className={styles.Btn} type="submit" value="Log In" />
-          </form>
-          <p className={styles.Accnt}>Don't have an account?</p>
-          <NavLink className={styles.Link} to={"/register"}>
-            Create one now
-          </NavLink>
+    let errorMsg = this.props.error ? (
+      <p className={styles.ErrorMsg}>{this.props.error.message}</p>
+    ) : null;
+
+    let markup = <Spinner />;
+    if (!this.props.loading) {
+      markup = (
+        <div className={styles.Login}>
+          <div className={styles.RegBox}>
+            <h4>Sign In</h4>
+            {errorMsg}
+            <form onSubmit={this.onSubmitHandler}>
+              {form}
+              <input className={styles.Btn} type="submit" value="Log In" />
+            </form>
+            <p className={styles.Accnt}>Don't have an account?</p>
+            <NavLink className={styles.Link} to={"/register"}>
+              Create one now
+            </NavLink>
+          </div>
         </div>
-      </div>
-    );
+      );
+    }
+    return markup;
   }
 }
 
 const mapSateToProps = state => {
   return {
     loading: state.auth.loading,
-    isAuth: state.auth.isAuth
+    isAuth: state.auth.isAuth,
+    error: state.auth.error
   };
 };
 
