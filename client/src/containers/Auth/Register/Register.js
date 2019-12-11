@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import axios from "axios";
 
 import Input from "../../../UI/Input/Input";
 import { NavLink } from "react-router-dom";
@@ -87,7 +88,7 @@ class Register extends Component {
     this.setState({ controls: updatedControls, noMatch: false });
   };
 
-  onSubmitHandler = e => {
+  onSubmitHandler = async e => {
     e.preventDefault();
     if (
       this.state.controls["password"].value !==
@@ -96,9 +97,28 @@ class Register extends Component {
       this.setState({ noMatch: true });
       return;
     }
-    console.log(
-      `Username: ${this.state.controls["email"].value} \n Password: ${this.state.controls["password"].value}`
-    );
+    try {
+      const newUser = {
+        name: this.state.controls["name"].value,
+        email: this.state.controls["email"].value,
+        password: this.state.controls["password"].value,
+        password2: this.state.controls["password2"].value
+      };
+      const config = {
+        headers: {
+          "Content-type": "application/json"
+        }
+      };
+      const body = JSON.stringify(newUser);
+      const res = await axios.post(
+        "http://localhost:8000/api/v1/user/register",
+        body,
+        config
+      );
+      console.log("Response: ", res);
+    } catch (err) {
+      console.log("Error: ", err);
+    }
     //Submit to be authenticated
     this.props.history.push("/wallet");
   };
