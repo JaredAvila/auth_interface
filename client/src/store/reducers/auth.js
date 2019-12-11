@@ -18,17 +18,20 @@ const regSuccess = (state, action) => {
     ...state,
     loading: false,
     token: action.payload.token,
-    isAuth: true
+    isAuth: true,
+    user: action.payload.data.user
   };
   return newState;
 };
 
 const loginSuccess = (state, action) => {
+  console.log(action.payload);
   const newState = {
     ...state,
     loading: false,
     token: action.payload.token,
-    isAuth: true
+    isAuth: true,
+    user: action.payload.data.user
   };
   return newState;
 };

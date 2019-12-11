@@ -23,10 +23,9 @@ export const register = (
       body,
       config
     );
-    console.log(res);
     dispatch({
       type: actionTypes.REGISTER_SUCCESS,
-      payload: res.data.token
+      payload: res.data
     });
   } catch (err) {
     dispatch({
@@ -54,7 +53,7 @@ export const login = (email, password) => async dispatch => {
     );
     dispatch({
       type: actionTypes.LOGIN_SUCCESS,
-      payload: res.data.token
+      payload: res.data
     });
   } catch (err) {
     dispatch({
