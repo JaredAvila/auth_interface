@@ -6,6 +6,34 @@ const sendEmail = require("../utils/email");
 const crypto = require("crypto");
 const catchAsync = require("../utils/catchAsync");
 
+const signToken = id => {
+  return jwt.sign({ id }, process.env.JWT_SECRET, {
+    expiresIn: process.env.JWT_EXPIRES_IN
+  });
+};
+
+const createAndSendToken = (user, statusCode, res) => {
+  const token = signToken(user._id);
+  const cookieOptions = {
+    expires: new Date(
+      Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000
+    ),
+    httpOnly: true
+  };
+
+  res.cookie("jwt", token, cookieOptions);
+
+  user.password = undefined;
+
+  res.status(statusCode).json({
+    status: "success",
+    token,
+    data: {
+      user
+    }
+  });
+};
+
 exports.protect = catchAsync(async (req, res, next) => {
   // 1) get token and check that it exists
   let token = null;
@@ -64,44 +92,40 @@ exports.register = catchAsync(async (req, res, next) => {
     passwordChangedAt: req.body.passwordChangedAt
   });
 
-  // 2.) create and sign token
-  const token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET, {
-    expiresIn: process.env.JWT_EXPIRES_IN
-  });
-
-  // 3.) send back token
-  res.status(201).json({
-    status: "success",
-    token
-  });
+  // 2.) create and sign token the respond
+  createAndSendToken(newUser, 201, res);
 });
 
 exports.login = catchAsync(async (req, res, next) => {
   const { email, password } = req.body;
+
+  // 1) make sure email and pass exist
   if (!email || !password) {
     return next(new AppError("Please provide email and password", 400));
   }
+
+  // 2) make sure user exists and pass is correct
   const user = await User.findOne({ email }).select("+password");
   if (!user || !(await user.passwordCheck(password, user.password))) {
     return next(new AppError("Incorrect email or password", 400));
   }
-  const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
-    expiresIn: process.env.JWT_EXPIRES_IN
-  });
-  res.status(200).json({
-    status: "success",
-    token
-  });
+
+  // 3) create token and respond
+  createAndSendToken(user, 200, res);
 });
 
 exports.forgotPassword = catchAsync(async (req, res, next) => {
+  // 1) get user
   const user = await User.findOne({ email: req.body.email });
   if (!user) {
     return next(new AppError("There is no user with that email", 404));
   }
+
+  // 2) generate random token
   const resetToken = user.createPasswordResetToken();
   await user.save({ validateBeforeSave: false });
 
+  // 3) send as an email
   const resetURL = `${req.protocol}://${req.get(
     "host"
   )}/api/v1/users/resetPassword/${resetToken}`;
@@ -133,6 +157,7 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
 });
 
 exports.resetPassword = catchAsync(async (req, res, next) => {
+  // 1) get user
   const hashedToken = crypto
     .createHash("sha256")
     .update(req.params.token)
@@ -143,6 +168,7 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
     passwordResetExpires: { $gt: Date.now() }
   });
 
+  // 2) if token has not exp and there is a user set the new pass
   if (!user) {
     return next(new AppError("Token is invalid", 400));
   }
@@ -152,12 +178,13 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
   user.passwordResetExpires = undefined;
   await user.save();
 
-  const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
-    expiresIn: process.env.JWT_EXPIRES_IN
-  });
+  // 3) create token and send response
+  createAndSendToken(user, 200, res);
+});
 
-  res.status(200).json({
-    status: "success",
-    token
-  });
+exports.updatePassword = catchAsync(async (req, res, next) => {
+  // 1) get user
+  // 2) check if pass is correct
+  // 3) update pass
+  // 4) login user
 });
