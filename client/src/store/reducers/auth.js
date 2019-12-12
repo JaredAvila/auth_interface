@@ -47,12 +47,14 @@ const authFail = (state, action) => {
 };
 
 const authLogout = (state, action) => {
+  console.log(action.payload);
   const newState = {
     ...state,
     loading: false,
     token: null,
     isAuth: false,
-    user: null
+    user: null,
+    error: null
   };
   return newState;
 };
