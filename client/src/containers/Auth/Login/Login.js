@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 
-import { NavLink } from "react-router-dom";
+import { NavLink, Redirect } from "react-router-dom";
 import { checkValidation } from "../../../helpers/validation";
 import { connect } from "react-redux";
 
@@ -116,6 +116,9 @@ class Login extends Component {
           </div>
         </div>
       );
+    }
+    if (this.props.isAuth) {
+      markup = <Redirect to="/home" />;
     }
     return markup;
   }

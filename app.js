@@ -14,6 +14,7 @@ const itemRouter = require("./routes/itemRoutes");
 const childRouter = require("./routes/childRoutes");
 
 const app = express();
+app.use(express.static("public"));
 
 // GLOBAL MIDDLEWARE
 
@@ -53,7 +54,7 @@ app.use(function(req, res, next) {
 
 // Development middleware -- delete when finished
 app.use((req, res, next) => {
-  console.log(req.cookies);
+  // console.log(req.cookies);
   next();
 });
 

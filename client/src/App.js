@@ -5,6 +5,7 @@ import Login from "./containers/Auth/Login/Login";
 import Register from "./containers/Auth/Register/Register";
 import Layout from "./hoc/Layout/Layout";
 import Logout from "./containers/Auth/Logout/Logout";
+import Home from "./containers/Home/Home";
 
 const App = () => {
   return (
@@ -13,6 +14,7 @@ const App = () => {
       <Route path="/login" exact component={Login} />
       <Route path="/register" exact component={Register} />
       <Route path="/logout" component={Logout} />
+      <Route path="/home" component={Home} />
     </Layout>
   );
 };

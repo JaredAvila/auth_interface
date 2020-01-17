@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 
 import Input from "../../../UI/Input/Input";
-import { NavLink } from "react-router-dom";
+import { NavLink, Redirect } from "react-router-dom";
 import { checkValidation } from "../../../helpers/validation";
 import { connect } from "react-redux";
 
@@ -158,6 +158,9 @@ class Register extends Component {
           </div>
         </div>
       );
+    }
+    if (this.props.isAuth) {
+      markup = <Redirect to="/home" />;
     }
 
     return markup;

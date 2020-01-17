@@ -25,7 +25,6 @@ const regSuccess = (state, action) => {
 };
 
 const loginSuccess = (state, action) => {
-  console.log(action.payload);
   const newState = {
     ...state,
     loading: false,
@@ -47,7 +46,6 @@ const authFail = (state, action) => {
 };
 
 const authLogout = (state, action) => {
-  console.log(action.payload);
   const newState = {
     ...state,
     loading: false,
