@@ -14,6 +14,39 @@
 
 .Bot {
     background-color: rgb(206, 206, 206);
+}
+
+.ChildCard {
     display: flex;
-    justify-content: center;
+    align-items: center;
+    padding: 5px;
+    margin-bottom: 5px;
+    border: 1px solid black;
+    border-radius: 55px;
+}
+
+.ChildCard img {
+    height: 75px;
+    border-radius: 50%;
+}
+
+.ChildCard h3 {
+    font-size: 1.4rem;
+    padding: 0 10px;
+}
+
+.PlusButton {
+    padding: 10px 25px;
+    background-color: grey;
+    font-size: 3rem;
+    border-radius: 50%;
+}
+
+.AddText {
+    text-align: center;
+    border-bottom: 4px double black;
+    padding: 5px 0;
+    margin-bottom: 15px;
+    font-size: 2rem;
+    color: gray;
 }

@@ -1,6 +1,7 @@
 const express = require("express");
 
 const authController = require("../controllers/authController");
+const userController = require("../controllers/userController");
 const childController = require("../controllers/childController");
 const itemRouter = require("./itemRoutes");
 
@@ -26,6 +27,8 @@ router
   .patch(
     authController.protect,
     childController.verifyParent,
+    userController.uploadPhoto,
+    userController.resizePhoto,
     childController.updatedChild
   )
   .delete(

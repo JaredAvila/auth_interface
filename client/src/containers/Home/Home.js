@@ -1,6 +1,6 @@
 import React from "react";
 import { Redirect } from "react-router-dom";
-import { Container, Grid } from "@material-ui/core";
+import { Container, Grid, Chip, Avatar } from "@material-ui/core";
 
 import * as classes from "./Home.module.css";
 
@@ -21,9 +21,22 @@ const Home = props => {
         <h1>{props.user.name}</h1>
       </div>
       <div className={classes.Bot}>
-        <button>Press me</button>
-        <button>Press me</button>
-        <button>Press me</button>
+        <h3 className={classes.AddText}>Child Accounts</h3>
+        {props.user.children.map(child => {
+          return (
+            <div className={classes.ChildCard}>
+              <img
+                src={`http://127.0.0.1:8000/img/users/${child.photo}`}
+                alt={child.name}
+              />
+              <h3>{child.name}</h3>
+            </div>
+          );
+        })}
+        <div className={classes.ChildCard}>
+          <p className={classes.PlusButton}>+</p>
+          <h3>Add new child</h3>
+        </div>
       </div>
     </Container>
   );

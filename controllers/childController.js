@@ -1,6 +1,8 @@
 const factory = require("./handlerFactory");
 const Child = require("../models/childAccountModel");
 const AppError = require("../utils/AppError");
+const catchAsync = require("../utils/catchAsync");
+const userController = require("./userController");
 
 exports.setParent = (req, res, next) => {
   if (!req.body.parent) req.body.parent = req.user.id;
